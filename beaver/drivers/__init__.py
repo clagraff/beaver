@@ -27,7 +27,7 @@ def register(ext):
         extension_handlers[ext] = fn
 
         def inner(*args, **kwargs):
-            fn(*args, **wkargs)
+            return fn(*args, **kwargs)
         return inner
     return outer
 

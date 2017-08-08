@@ -10,31 +10,113 @@ It uses Jinja2 for templating.
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+### Installing 
 
-What things you need to install the software and how to install them
-
-```
-Give examples
+```bash
+pip install -e git+https://github.com/clagraff/beaver.git#egg=beaver
 ```
 
-### Installing
+### Generate one file
 
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
-```
-Give the example
+Below is a simplistic example of how to generate source code from a single input.
+```bash
+beaver one template.tpl input.json -o output.code
 ```
 
-And repeat
+#### Real-world example
 
-```
-until finished
+Let's pretend we want to a Golang struct based on a Yaml file. Here are the two
+files:
+
+*struct.tpl*
+```go
+// {{ name }} is a test struct
+type {{ name }} struct {
+{% for key in attributes -%}
+    {%- set attr = attributes[key] -%}
+    {{ key }}   {{ attr.type }}{% if attr.json %} `json:"{{ attr.json }}"`{% endif %}
+{% endfor -%}
+}
+
+// Print will print out the contents of {{ name }}
+func ({{ name[0] }} {{ name }}) Print() {
+    fmt.Println("{{ name }}: ")
+{% for key in attributes -%}
+    fmt.Println("{{ key }} -", {{ name[0] }}.{{ key }})
+{% endfor -%}
+}
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+*data.yaml*
+```yaml
+name: MyAwesomeStruct
+attributes:
+    ID:
+        type: "*int64"
+        json: id
+    Data:
+        type: float64
+        json: "-"
+    Secret:
+        type: string
+    DBConn:
+        type: sql.DB
+        json: conn
+```
+
+To generate code, we can run:
+
+```bash
+$ beaver one struct.tpl data.yaml -o struct.go
+$ cat struct.go
+// MyAwesomeStruct is a test struct
+type MyAwesomeStruct struct {
+ID   *int64 `json:"id"`
+Data   float64 `json:"-"`
+Secret   string
+DBConn   sql.DB `json:"conn"`
+}
+
+// Print will print out the contents of MyAwesomeStruct
+func (M MyAwesomeStruct) Print() {
+    fmt.Println("MyAwesomeStruct: ")
+fmt.Println("ID -", M.ID)
+fmt.Println("Data -", M.Data)
+fmt.Println("Secret -", M.Secret)
+fmt.Println("DBConn -", M.DBConn)
+}
+```
+
+Hmm. Unfortunately that code is not quite formatted right. But no worries!
+
+We can use some post-rendering commands to fix it. These commands will execute against
+the code after it is rendered, but before it is outputted.
+
+```bash
+$ beaver one struct.tpl data.yaml --post gofmt --post goimports -o struct.go
+$ cat struct.go
+import (
+	"database/sql"
+	"fmt"
+)
+
+// MyAwesomeStruct is a test struct
+type MyAwesomeStruct struct {
+	ID     *int64  `json:"id"`
+	Data   float64 `json:"-"`
+	Secret string
+	DBConn sql.DB `json:"conn"`
+}
+
+// Print will print out the contents of MyAwesomeStruct
+func (M MyAwesomeStruct) Print() {
+	fmt.Println("MyAwesomeStruct: ")
+	fmt.Println("ID -", M.ID)
+	fmt.Println("Data -", M.Data)
+	fmt.Println("Secret -", M.Secret)
+	fmt.Println("DBConn -", M.DBConn)
+}
+```
 
 ## Running the tests
 
