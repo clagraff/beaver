@@ -13,6 +13,17 @@ It uses Jinja2 for templating.
 pip install -e git+https://github.com/clagraff/beaver.git#egg=beaver
 ```
 
+## tl;dr
+
+```bash
+$ beaver one template.tpl data.json                                     # generate code and print to STDOUT
+$ beaver one template.tpl stuff.yaml -o my_code.cpp                     # generate code and write to file
+$ beaver one template.tpl config.ini --post indent -st -o indented.c    # generate code, indent the code, write to file
+
+$ beaver many template.tpl {{__name__}}.cpp *.json                      # generate code from JSON files, write to .cpp files
+$ beaver many templates.tpl foo{{__index__}}.c *.yaml --post indent -st # generate code from yaml files, write to .cpp files after indenting.
+```
+
 ## Generate Code
 Beaver supports two modes of code generation:
 1. Single-file generation, using the `one` sub-command.
