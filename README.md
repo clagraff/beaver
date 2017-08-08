@@ -25,12 +25,28 @@ $ beaver many templates.tpl foo{{__index__}}.c *.yaml --post indent -st # genera
 ```
 
 ## Generate Code
-Beaver supports two modes of code generation:
-1. Single-file generation, using the `one` sub-command.
-2. Multiple-file generatio, using the `many` sub-command.
+### Data Formats
+Beaver supports the following input formats for data:
+
+* JSON
+* Yaml
+* XML
+* INI
+
+... with plans to include some additional format types.
+
+### Templating
+Beaver uses [Jinja2](http://jinja.pocoo.org/docs) for templating. This means you
+can leaverage Jinja [filters](http://jinja.pocoo.org/docs/2.9/templates/#list-of-builtin-filters)
+and [functions](http://jinja.pocoo.org/docs/2.9/templates/#list-of-global-functions), 
+along with all the other niceties that come with using Jinja.
+
+Never used Jinja2 before? You can learn how to [get started](http://jinja.pocoo.org/docs/2.9/intro/) or jump specifically
+to their [template documention](http://jinja.pocoo.org/docs/2.9/templates/)
+
 
 ### Generate one file
-To generate one specific file, you can use the `one` command. You must specify
+To generate one specific file, you can use the `one` sub-command. You must specify
 a Jinja2 template of the code structure, and the input data (JSON, Yaml, XML, 
 or INI) file.
 
@@ -41,7 +57,15 @@ specify an output file.
 $ beaver one template.tpl input.json -o output.code
 ```
 
-#### Real-world example
+### Generate multiple files
+To generate multiple files at once, you can use the `many` sub-command.
+
+```bash
+$ beaver one template.tpl one_output_file.java input_1.json input_2.xml input_3.yaml
+$ beaver one template.tpl one_output_file.java *.{json,xml,yaml} 
+```
+
+### Real-world example
 
 Let's pretend we want to a Golang struct based on a Yaml file. Here are the two
 files:
