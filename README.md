@@ -6,21 +6,28 @@ by combining the two.
 
 It uses Jinja2 for templating.
 
-## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Installing 
+## Installing 
 
 ```bash
 pip install -e git+https://github.com/clagraff/beaver.git#egg=beaver
 ```
 
-### Generate one file
+## Generate Code
+Beaver supports two modes of code generation:
+1. Single-file generation, using the `one` sub-command.
+2. Multiple-file generatio, using the `many` sub-command.
 
-Below is a simplistic example of how to generate source code from a single input.
+### Generate one file
+To generate one specific file, you can use the `one` command. You must specify
+a Jinja2 template of the code structure, and the input data (JSON, Yaml, XML, 
+or INI) file.
+
+The command will output to STDOUT by default, unless the `-o` flag is used to
+specify an output file.
+
 ```bash
-beaver one template.tpl input.json -o output.code
+$ beaver one template.tpl input.json -o output.code
 ```
 
 #### Real-world example
