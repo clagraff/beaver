@@ -59,12 +59,12 @@ def run(cmd, stdin):
 
 def path_context(path):
     ctx = {}
-
     name = os.path.basename(path)
+    split = name.split(".")
 
     ctx["__file__"] = name
-    ctx["__name__"] = name.split(".")[0]
-    ctx["__ext__"] = name.split(".")[-1]
+    ctx["__name__"] = ".".join(split[0:-1] ) if len(split) > 1 else name
+    ctx["__ext__"] = split[-1] if len(split) > 1 else ""
     ctx["__dir__"] = os.path.dirname(path)
     ctx["__path__"] = path
 
