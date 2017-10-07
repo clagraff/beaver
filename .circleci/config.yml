@@ -44,8 +44,8 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python setup.py test
-            python -m pep8 .
+            python3 setup.py test
+            python3 -m pep8 .
 
       - store_artifacts:
           path: test-reports
