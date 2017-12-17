@@ -25,7 +25,7 @@ import argparse
 
 
 
-_one_epilog = """    Generate code for one file.
+_ONE_EPILOG = """    Generate code for one file.
 
     flags and arguments:
         -o OUTPUT
@@ -72,7 +72,7 @@ _one_epilog = """    Generate code for one file.
 """
 
 
-_many_epilog = """    Generate code for multiple files.
+_MANY_EPILOG = """    Generate code for multiple files.
 
     flags and arguments:
         OUTPUT
@@ -129,27 +129,52 @@ _many_epilog = """    Generate code for multiple files.
 
 
 def populate_one_cmd(parser):
+    """Populate the provided parent parser with a subcomand for generating only
+    a single output file.
+    """
     parser.add_argument('template', action='store', help='Path to the template file.',)
     parser.add_argument('input', action='store', help='Path to input file.',)
-    parser.add_argument('-o', action='store', dest="output", help='Path to output file instead of StdOut.',)
-    parser.add_argument('--post', action='append', dest="post", default=[], help='Command(s) which will receive the generated code after it is rendered.',)
+    parser.add_argument(
+        '-o', action='store', dest="output",
+        help='Path to output file instead of StdOut.',
+    )
+    parser.add_argument(
+        '--post', action='append', dest="post", default=[],
+        help='Command(s) which will receive the generated code after '
+        'it is rendered.',
+    )
 
 
 def populate_many_cmd(parser):
-    parser.add_argument('template', action='store', help='Path to the template file.')
-    parser.add_argument('output', action='store', help='Output pattern for creating output files.')
-    parser.add_argument('inputs', action='store', nargs="+", help='Input patterns')
-    parser.add_argument('--post', action='append', dest="post", default=[], help='Command(s) which will receive the generated code after it is rendered.',)
+    """Populate the provided parent parser with a subcommand for generating
+    multiple output files.
+    """
+    parser.add_argument(
+        'template', action='store', help='Path to the template file.'
+    )
+    parser.add_argument(
+        'output', action='store',
+        help='Output pattern for creating output files.'
+    )
+    parser.add_argument(
+        'inputs', action='store', nargs="+", help='Input patterns'
+    )
+    parser.add_argument(
+        '--post', action='append', dest="post", default=[],
+        help='Command(s) which will receive the generated code after it '
+        'is rendered.',
+    )
 
 
 def create_parser():
+    """Creates and returns the main program parser. """
     parser = argparse.ArgumentParser(description='Beaver is a code generation tool.')
     subparsers = parser.add_subparsers(help='commands', dest='command')
 
     one = subparsers.add_parser(
         'one',
         help="Generate code for one file.",
-        epilog=_one_epilog,
+        epilog=_ONE_EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
@@ -157,13 +182,11 @@ def create_parser():
     many = subparsers.add_parser(
         'many',
         help='Generate code for multiple files.',
-        epilog=_many_epilog,
+        epilog=_MANY_EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     populate_one_cmd(one)
     populate_many_cmd(many)
-
-
 
     return parser
