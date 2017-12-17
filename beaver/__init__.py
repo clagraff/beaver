@@ -38,6 +38,9 @@ import beaver.drivers as drivers
 
 
 def run(cmd, stdin):
+    """ Execute the specified command, providing input into the process as
+    provided by the "stdin" string.
+    """
     proc = subprocess.Popen(
         cmd.split(" "),
         stdin=subprocess.PIPE,
@@ -52,12 +55,17 @@ def run(cmd, stdin):
     retcode = proc.returncode
 
     if retcode != 0:
-        raise Exception("External command: %s returned non-zero exit status: %s" % (cmd, retcode))
+        raise Exception(
+            "External command: %s returned non-zero exit status: %s" % (
+                cmd, retcode
+            )
+        )
 
     return utf8_decoded
 
 
 def path_context(path):
+    """Return a dictionary containing information about the specified path. """
     ctx = {}
     name = os.path.basename(path)
     split = name.split(".")
@@ -72,6 +80,9 @@ def path_context(path):
 
 
 def write_output(in_path, out_path, ctx):
+    """Output to the `out_put` based on the result of rendering the input
+    file with the templating context specified.
+    """
     tpl = jinja2.Template(out_path)
     output_ctx = path_context(in_path)
 
@@ -82,15 +93,17 @@ def write_output(in_path, out_path, ctx):
 
 
 def load_template(path):
+    """Load a jinja template from the specified file path. """
     contents = ""
-    with open(path, 'r') as f:
-        contents = f.read()
+    with open(path, 'r') as template_file:
+        contents = template_file.read()
 
     tpl = jinja2.Template(contents)
     return tpl
 
 
 def do_one(namespace):
+    """Process the generation of just one output file. """
     if not os.path.isfile(namespace.template):
         raise Exception("Invalid template file path")
     if not os.path.isfile(namespace.input):
@@ -109,13 +122,14 @@ def do_one(namespace):
         context["__index__"] = 0
         output_path = write_output(namespace.input, namespace.output, context)
 
-        with open(output_path, 'w') as f:
-            f.write(rendered)
+        with open(output_path, 'w') as output_file:
+            output_file.write(rendered)
     else:
         print(rendered)
 
 
 def do_many(namespace):
+    """Process the generation of multiple (more-than-one) output files ."""
     if not os.path.isfile(namespace.template):
         raise Exception("Invalid template file path")
     if not namespace.inputs:
@@ -141,10 +155,11 @@ def do_many(namespace):
         context["__index__"] = idx
         output_path = write_output(input_file, namespace.output, context)
 
-        with open(output_path, 'w') as f:
-            f.write(rendered)
+        with open(output_path, 'w') as output_file:
+            output_file.write(rendered)
 
 def main():
+    """Create the parser and attempt to parse the program's arguments. """
     parser = cli.create_parser()
 
     namespace = parser.parse_args()
@@ -162,4 +177,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
