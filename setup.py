@@ -61,7 +61,7 @@ py2exe_options = {
 exec(compile(open('beaver/version.py').read(),
              'beaver/version.py', 'exec'))
 
-DESCRIPTION = 'Tool for templated code generation'
+DESCRIPTION = 'A code generation tool made with Python'
 LONG_DESCRIPTION = 'Command-line program to generate source code from a Jinja2 template and 1 or more input structures'
 
 py2exe_console = [{
@@ -132,9 +132,8 @@ setup(
     author='Curtis La Graff',
     author_email='curtis@lagraff.me',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
-        'License :: Public Domain',
+        'License :: MIT LICENSE',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
