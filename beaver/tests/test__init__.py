@@ -86,5 +86,52 @@ class TestPathContext(unittest.TestCase):
             self.assertEqual(result, expected)
 
 
+class TestDoOne(unittest.TestCase):
+    @mock.patch("beaver.os.path.isfile")
+    def test_file_exceptions(self, mock_isfile):
+        mock_isfile.return_value = True
+        def side_effect(path):
+            return bool(path)
+        mock_isfile.side_effect = side_effect
+
+        m = mock.Mock()
+        m.template = ""
+
+        with self.assertRaises(Exception):
+            beaver.do_one(m)
+
+        m.template = "/some/path"
+        m.input = ""
+
+        with self.assertRaises(Exception):
+            beaver.do_one(m)
+
+    @mock.patch("beaver.open")
+    @mock.patch("beaver.write_output")
+    @mock.patch("beaver.run")
+    @mock.patch("beaver.load_template")
+    @mock.patch("beaver.drivers.parse")
+    @mock.patch("beaver.os.path.isfile")
+    def test_ensure_posts(
+        self, mock_isfile, mock_parse, mock_load_template,
+        mock_run, mock_write_output, mock_open
+    ):
+        m = mock.Mock()
+        m.post = [
+            "first",
+            "second",
+            "third"
+        ]
+
+        mock_tpl = mock.Mock()
+        mock_tpl.return_value = None
+
+        mock_load_template.return_value = mock_tpl
+
+        beaver.do_one(m)
+
+        assert mock_run.call_count == len(m.post)
+
+
 if __name__ == '__main__':
     unittest.main()
